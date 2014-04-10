@@ -146,7 +146,7 @@ ruleset givingStream {
       //twilio:send_sms("8017094212", "3852194414", "Location: " + location);
       //send_directive("testContent") with testing = "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL;
       send_directive("testContent") with testing = tags;
-      twilio:send_sms("8017094212", "3852194414", "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL);
+      twilio:send_sms("8015104357", "3852194414", "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL);
     }
   }
 }
