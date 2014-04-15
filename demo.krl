@@ -17,10 +17,9 @@ ruleset givingStream {
   global {
     givingStreamUrl = "http://ec2-54-80-167-106.compute-1.amazonaws.com/";
     eventChannel = "BA30DA34-C4BB-11E3-952F-E822D43F553C";
-    rids = "b505198x11";
     myZipcode = "84604";
   }
-
+  
   rule getUserId {
     select when explicit getUserId
     pre {
@@ -59,7 +58,7 @@ ruleset givingStream {
           and command = command;
     }
   }
-
+  
   rule offer {
     select when explicit offer
     pre {
@@ -94,11 +93,10 @@ ruleset givingStream {
       userId = ent:userId;
       body = event:attr("body");
       tags = body.extract(re/ #(\w+)\s?/);
-      webhook = "http://cs.kobj.net/sky/event/"+eventChannel+"?_domain=givingStream&_name=watchTagAlert&_rids="+rids;
+      webhook = "http://cs.kobj.net/sky/event/"+eventChannel+"?_domain=givingStream&_name=watchTagAlert";
       joined = tags.join(" ");
     }
     {
-      //twilio:send_sms("8017094212", "3852194414", joined + webhook);
       send_directive("testing") with tags = tags and webhook = webhook and userId = userId;
       http:post(givingStreamUrl + "users/" + userId + "/watchtags")
         with body = {
@@ -117,15 +115,11 @@ ruleset givingStream {
       userId = ent:userId;
       body = event:attr("body");
       tags = body.extract(re/ #(\w+)\s?/);
-      submitBody = tags.length() > 0 => {"watchtags" : tags} | {};
+      tag = tags.length() > 0 => tags[0] | '';
     }
     {
       send_directive("stopped") with submitBody = submitBody;
-      http:delete(givingStreamUrl + "users/" + userId + "/watchtags")
-        with body = submitBody and
-        headers = {
-          "content-type": "application/json"
-        };
+      http:delete(givingStreamUrl + "users/" + userId + "/watchtags/" + tag);
     }
   }
 
@@ -135,7 +129,6 @@ ruleset givingStream {
       content = event:attr("offer");
       contentDecoded = content.decode();
       location = contentDecoded.pick("$.location").as("str");
-      //tags = contentDecoded.pick("$.tags").as("str");
       tags = contentDecoded.pick("$.tags");
       tags = tags[0];
       description = contentDecoded.pick("$.description").as("str");
@@ -143,10 +136,9 @@ ruleset givingStream {
     }
     if (location == myZipcode) then
     {
-      //twilio:send_sms("8017094212", "3852194414", "Location: " + location);
-      //send_directive("testContent") with testing = "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL;
-      send_directive("testContent") with testing = tags;
+      //send_directive("testContent") with testing = tags;
       twilio:send_sms("8015104357", "3852194414", "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL);
     }
   }
+  
 }
