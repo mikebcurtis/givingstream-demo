@@ -6,8 +6,8 @@ ruleset givingStream {
     >>
     author ""
 
-    key twilio {"account_sid" : "ACad13df656e7828ae5cbc95e1a786b744",
-                "auth_token"  : "0a11406796224bad4fecf997d926fa48"
+    key twilio {"account_sid" : "ACff7946d590c683a85666c3264d9a6166",
+                "auth_token"  : "ce46e850578831e1d4cb146ff3b5abbe"
     }
      
     use module a8x115 alias twilio with twiliokeys = keys:twilio()
@@ -137,7 +137,7 @@ ruleset givingStream {
     if (location == myZipcode) then
     {
       //send_directive("testContent") with testing = tags;
-      twilio:send_sms("8015104357", "3852194414", "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL);
+      twilio:send_sms("8015104357", "3852452636", "Tags: " + tags + ". Description: " + description + ". Image: " + imgURL);
     }
   }
   
